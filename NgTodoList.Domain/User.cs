@@ -23,7 +23,7 @@ namespace NgTodoList.Domain
             Id = 0;
             Name = name;
             Email = email;
-            Password = password;
+            Password = EncryptHelper.Encrypt(password);
             IsActive = true;
             _todos = new List<Todo>();
             Todos = new List<Todo>();

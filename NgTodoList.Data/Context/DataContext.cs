@@ -9,6 +9,7 @@ namespace NgTodoList.Data.Context
         public DataContext()
             :base("NgTodoListConnectionString")
         {
+            Database.SetInitializer(new DataContextInitializer());
             Configuration.LazyLoadingEnabled = false;
             Configuration.ProxyCreationEnabled = false;
         }
@@ -27,6 +28,9 @@ namespace NgTodoList.Data.Context
     {
         protected override void Seed(DataContext context)
         {
+            var user = new User("Christian Silva", "christian.eds@hotmail.com", "123456");
+            context.Users.Add(user);
+            context.SaveChanges();
             base.Seed(context);
         }
     }
