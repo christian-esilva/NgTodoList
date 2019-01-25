@@ -1,10 +1,7 @@
 ﻿using NgTodoList.Utils.Security;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace NgTodoList.Domain
 {
@@ -60,8 +57,58 @@ namespace NgTodoList.Domain
             if(newPassowrd != confirmNewPassword)
                 throw new Exception("As senhas digitadas não conferem");
 
+            if (newPassowrd.Length < 6)
+                throw new Exception("A nova senha é inválida");
+
             var pass = EncryptHelper.Encrypt(newPassowrd);
             Password = pass;
+        }
+
+        public string ResetPassword(string email)
+        {
+            if (!Regex.IsMatch(email, @"[-0-9a-zA-Z.+_]+@[-0-9a-zA-Z.+_]+\.[a-zA-Z]{2,4}"))
+                throw new Exception("E-mail inválido");
+
+            var password = Guid.NewGuid().ToString().Substring(0, 8);
+            Password = EncryptHelper.Encrypt(password);
+
+            return password;
+        }
+
+        public void Authenticate(string email, string password)
+        {
+            if(!IsActive)
+                throw new Exception("Usuário inativo");
+
+            if (!Regex.IsMatch(email, @"[-0-9a-zA-Z.+_]+@[-0-9a-zA-Z.+_]+\.[a-zA-Z]{2,4}"))
+                throw new Exception("E-mail inválido");
+
+            var pass = EncryptHelper.Encrypt(password);
+            if(!(Email.ToLower() == email.ToLower()) && !(Password == pass))
+                throw new Exception("Usuário ou senha inválidos");
+        }
+
+        public void UpdateInfo(string name, string email)
+        {
+            if (name.Length < 3)
+                throw new Exception("Nome inválido");
+
+            name = Name;
+        }
+
+        public void ClearTodos()
+        {
+            _todos = new List<Todo>();
+        }
+
+        public void Inactivate()
+        {
+            IsActive = false;
+        }
+
+        public void Activate()
+        {
+            IsActive = true;
         }
     }
 }
